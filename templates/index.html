@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <title>Image Classifier</title>
+</head>
+
+<body>
+    <div class="navbar-center p-2">
+        <h1 class="p-4 text-fuchsia-950 text-center font-bold text-xl">DEEP LEARNING FOR RECOGNITION OF NUTS BREED</h1>
+    </div>
+
+    <div class="card pl-12 pr-12 pb-4 bg-base-100 image-full w-full h-screen max-h-[90vh] shadow-xl">
+        <figure class="py-8">
+            <img src="https://i.ibb.co.com/vP1m4jc/bg.jpg" alt="Background" />
+        </figure>
+        <div class="card-body pt-32">
+            <div class="text-center">
+                <h1 class="text-3xl pb-6 font-bold">Upload an Image for Classification</h1>
+            </div>
+            <div class="flex justify-center">
+                <div class="text-center w-1/3 pb-5">
+                    <form id="uploadForm" class="border-2 border-white-600 p-4" enctype="multipart/form-data">
+                        <input id="fileInput" class="p-2" type="file" name="file" accept="image/*" required>
+                        <button class="btn" type="submit">Classify</button>
+                    </form>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="text-center pt-96 w-1/3">
+                    <h1 class="text-white border-2 border-white-600">Copyright © 2025 - All rights reserved by Team-Z
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <input type="checkbox" id="resultModal" class="modal-toggle" />
+    <div class="modal">
+        <div class="modal-box flex flex-col items-center text-center">
+            <h3 class="font-bold text-lg">Classification Result</h3>
+            <div class="py-4">
+                <p id="resultText">classification result will appear here.</p>
+                <img id="uploadedImage" class="mt-4 max-w-full h-auto" alt="Uploaded Image" />
+            </div>
+            <div class="modal-action">
+                <label for="resultModal" class="btn">Close</label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            const formData = new FormData();
+
+            if (fileInput.files.length === 0) {
+                alert("Please select a file before submitting.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            formData.append('file', file);
+
+            const uploadedImage = document.getElementById('uploadedImage');
+            const reader = new FileReader();
+            reader.onload = () => {
+                uploadedImage.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch prediction.');
+                }
+
+                const result = await response.json();
+
+                document.getElementById('resultText').textContent = `Predicted Class: ${result.predicted_class}`;
+                document.getElementById('resultModal').checked = true;
+
+                document.getElementById('uploadForm').reset();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while classifying the image.');
+            }
+        });
+    </script>
+</body>
+
+</html>
