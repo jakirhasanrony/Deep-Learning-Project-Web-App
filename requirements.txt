@@ -30,7 +30,8 @@ optree==0.13.1
 packaging==24.2
 pip==24.3.1
 pillow==11.1.0
-protobuf==5.29.2
+# protobuf==5.29.2
+protobuf>=3.20.3,<5.0.0
 Pygments==2.18.0
 requests==2.32.3
 rich==13.9.4
