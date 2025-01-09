@@ -36,7 +36,8 @@ Pygments==2.18.0
 requests==2.32.3
 rich==13.9.4
 six==1.17.0
-tensorboard==2.18.0
+# tensorboard==2.18.0
+tensorboard>=2.14,<2.15
 tensorboard-data-server==0.7.2
 # tensorflow==2.18.0
 # tensorflow==2.13.0
